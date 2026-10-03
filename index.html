@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>骑手普惠信贷经营测算平台</title>
+  <meta name="description" content="面向新就业群体普惠信贷项目的授信筛选、盈利测算与盈亏平衡演示平台。" />
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d8dee8;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --blue: #176e9c;
+      --blue-deep: #0b4f74;
+      --gold: #b87528;
+      --green: #1c7c54;
+      --red: #b42318;
+      --shadow: 0 18px 46px rgba(24, 36, 58, 0.12);
+      --radius: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #eef3f8 0%, var(--bg) 42%, #ffffff 100%);
+      color: var(--ink);
+      font-size: 16px;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .shell {
+      width: min(1440px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .title-block, .logic-block, .panel {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(216, 222, 232, 0.95);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .title-block {
+      padding: 24px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--blue-deep);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+      margin-bottom: 12px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 14px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 920px;
+    }
+
+    .logic-block {
+      padding: 22px;
+      display: grid;
+      align-content: center;
+      gap: 12px;
+    }
+
+    .logic-title {
+      margin: 0;
+      font-weight: 800;
+      color: var(--blue-deep);
+    }
+
+    .logic-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      color: #24364b;
+      font-weight: 700;
+    }
+
+    .logic-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #f9fbfd;
+      min-height: 74px;
+      display: grid;
+      align-content: center;
+    }
+
+    .arrow {
+      color: var(--gold);
+      font-size: 22px;
+      text-align: center;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    .controls {
+      position: sticky;
+      top: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .scenario-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .scenario-tabs button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 8px;
+      background: #fff;
+      color: #26374b;
+      cursor: pointer;
+      min-height: 42px;
+    }
+
+    .scenario-tabs button.active {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+      font-weight: 700;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+      padding: 10px 0;
+      border-bottom: 1px solid #edf0f5;
+    }
+
+    .field:last-child {
+      border-bottom: 0;
+    }
+
+    .field-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+    }
+
+    label {
+      color: #26374b;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .value {
+      color: var(--blue-deep);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .kpi {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+      min-height: 112px;
+    }
+
+    .kpi small {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .kpi strong {
+      display: block;
+      margin-top: 8px;
+      font-size: clamp(22px, 2.4vw, 32px);
+      line-height: 1.15;
+      color: var(--ink);
+      word-break: keep-all;
+    }
+
+    .profit {
+      color: var(--green) !important;
+    }
+
+    .loss {
+      color: var(--red) !important;
+    }
+
+    .chart-wrap {
+      height: 360px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .table th, .table td {
+      padding: 11px 10px;
+      border-bottom: 1px solid #edf0f5;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .table th:first-child, .table td:first-child {
+      text-align: left;
+    }
+
+    .table th {
+      color: var(--muted);
+      font-weight: 700;
+      background: #f9fbfd;
+    }
+
+    .note {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .decision {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .decision .step {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #f9fbfd;
+    }
+
+    .decision b {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--blue-deep);
+    }
+
+    .decision span {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    @media (max-width: 1180px) {
+      header, main, .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        position: static;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .shell {
+        width: min(100vw - 24px, 1440px);
+        padding-top: 12px;
+      }
+
+      .logic-flow, .decision, .kpis {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+
+      .chart-wrap {
+        height: 300px;
+      }
+
+      .table {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <section class="title-block">
+        <div class="eyebrow"><span class="dot"></span>银行视角经营测算原型</div>
+        <h1>骑手普惠信贷经营测算平台</h1>
+        <p class="lead">目标客群设定为传统渠道暂不放贷的新就业群体。平台数据、保单数据与还款约束机制只用于重新识别其中一部分可授信客户，测算结果聚焦银行能否盈利、需要多少申请量覆盖固定成本。</p>
+      </section>
+      <section class="logic-block">
+        <p class="logic-title">答辩时可以用这一句解释项目逻辑</p>
+        <div class="logic-flow">
+          <div class="logic-card">传统渠道<br>不放贷</div>
+          <div class="arrow">→</div>
+          <div class="logic-card">新增数据<br>识别现金流与保障</div>
+          <div class="arrow">→</div>
+          <div class="logic-card">部分通过<br>部分拒绝</div>
+        </div>
+      </section>
+    </header>
+
+    <main>
+      <aside class="panel controls">
+        <div>
+          <h2>情景选择</h2>
+          <div class="scenario-tabs">
+            <button type="button" class="active" data-scenario="pilot">试点</button>
+            <button type="button" data-scenario="base">基准</button>
+            <button type="button" data-scenario="stress">压力</button>
+          </div>
+        </div>
+
+        <div>
+          <h2>参数输入</h2>
+          <div id="fields"></div>
+        </div>
+      </aside>
+
+      <section class="grid">
+        <section class="panel">
+          <h2>经营结果</h2>
+          <div class="kpis">
+            <div class="kpi"><small>预计项目利润</small><strong id="profitText">-</strong></div>
+            <div class="kpi"><small>盈亏平衡申请人数</small><strong id="breakEvenText">-</strong></div>
+            <div class="kpi"><small>批准放款人数</small><strong id="fundedText">-</strong></div>
+            <div class="kpi"><small>贷款投放规模</small><strong id="volumeText">-</strong></div>
+          </div>
+          <p class="note">利润口径：申请人数 × 单个申请的期望贡献 − 固定成本。单个申请贡献已考虑通过率、利息收入、资金成本、违约损失、数据成本与运营成本。</p>
+        </section>
+
+        <section class="panel">
+          <h2>固定成本与申请量关系</h2>
+          <div class="chart-wrap"><canvas id="profitChart" aria-label="利润随申请人数变化图"></canvas></div>
+          <p class="note">横轴为申请人数，纵轴为项目利润。曲线超过零线后，项目开始覆盖固定成本。</p>
+        </section>
+
+        <section class="two-col">
+          <div class="panel">
+            <h2>收益拆解</h2>
+            <table class="table">
+              <tbody id="incomeRows"></tbody>
+            </table>
+          </div>
+          <div class="panel">
+            <h2>10万元以上大额处理</h2>
+            <div class="decision">
+              <div class="step"><b>先分场景</b><span>普通经营性周转看持续现金流；事故后大额授信看事故后的真实还款来源。</span></div>
+              <div class="step"><b>再看保险</b><span>有保单不等于银行能回款，只有赔付责任、金额、时间和权益安排清楚后才能计入回收。</span></div>
+              <div class="step"><b>最后定额度</b><span>额度应由月供承受能力反推，不能只按保额或赛题额度倒推。</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>给学生的产品表达</h2>
+          <table class="table">
+            <thead>
+              <tr><th>模块</th><th>答辩时说法</th><th>平台展示指标</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>数据接入</td><td>接入平台履约、收入稳定性、保单和赔付进度</td><td>数据覆盖率、数据成本</td></tr>
+              <tr><td>风险筛选</td><td>从传统不放贷人群中筛出可授信客户</td><td>审批通过率、PD、LGD</td></tr>
+              <tr><td>额度测算</td><td>用现金流承受能力反推额度</td><td>平均额度、期限、月供</td></tr>
+              <tr><td>经营决策</td><td>银行最终看组合利润与盈亏平衡点</td><td>总利润、放款人数、投放规模</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      本页面为商业计划书答辩演示原型。参数为可调假设，不代表银行正式审批模型；正式落地需使用真实申请数据、实际资金转移定价、真实逾期迁徙率和贷后回收数据校准。
+    </footer>
+  </div>
+
+  <script>
+    const state = {
+      applications: 2000,
+      fixedCost: 300000,
+      approvalRate: 34,
+      loanAmount: 80000,
+      rate: 6.0,
+      term: 24,
+      pd: 3.0,
+      lgd: 55,
+      funding: 1.53,
+      dataCost: 25,
+      opsCost: 45
+    };
+
+    const scenarios = {
+      pilot: { applications: 1200, fixedCost: 200000, approvalRate: 28, loanAmount: 60000, rate: 6.0, term: 24, pd: 3.5, lgd: 58, funding: 1.53, dataCost: 22, opsCost: 45 },
+      base: { applications: 3000, fixedCost: 300000, approvalRate: 34, loanAmount: 80000, rate: 6.5, term: 24, pd: 3.0, lgd: 55, funding: 1.53, dataCost: 25, opsCost: 45 },
+      stress: { applications: 2500, fixedCost: 500000, approvalRate: 25, loanAmount: 70000, rate: 5.5, term: 24, pd: 5.0, lgd: 65, funding: 1.8, dataCost: 35, opsCost: 55 }
+    };
+
+    const fields = [
+      ["applications", "申请人数", 100, 10000, 100, "人"],
+      ["fixedCost", "固定成本", 0, 800000, 10000, "元"],
+      ["approvalRate", "审批通过率", 5, 80, 1, "%"],
+      ["loanAmount", "平均贷款额度", 10000, 200000, 5000, "元"],
+      ["rate", "贷款年利率", 3, 12, 0.1, "%"],
+      ["term", "贷款期限", 6, 36, 6, "个月"],
+      ["pd", "预计违约概率 PD", 0.5, 12, 0.1, "%"],
+      ["lgd", "违约损失率 LGD", 20, 90, 1, "%"],
+      ["funding", "资金成本", 0.5, 4, 0.01, "%"],
+      ["dataCost", "单个申请数据成本", 0, 100, 1, "元"],
+      ["opsCost", "单笔放款运营成本", 0, 200, 5, "元"]
+    ];
+
+    const formatter = new Intl.NumberFormat("zh-CN");
+    const money = (n) => `${n < 0 ? "-" : ""}${formatter.format(Math.abs(Math.round(n)))} 元`;
+    const compactMoney = (n) => {
+      const abs = Math.abs(n);
+      const sign = n < 0 ? "-" : "";
+      if (abs >= 100000000) return `${sign}${(abs / 100000000).toFixed(2)} 亿元`;
+      if (abs >= 10000) return `${sign}${(abs / 10000).toFixed(1)} 万元`;
+      return `${sign}${formatter.format(Math.round(abs))} 元`;
+    };
+
+    function pmt(principal, annualRate, months) {
+      const m = annualRate / 12;
+      if (m === 0) return principal / months;
+      return principal * m * Math.pow(1 + m, months) / (Math.pow(1 + m, months) - 1);
+    }
+
+    function calculate(customApplications = state.applications) {
+      const approval = state.approvalRate / 100;
+      const annualRate = state.rate / 100;
+      const fundingRate = state.funding / 100;
+      const pd = state.pd / 100;
+      const lgd = state.lgd / 100;
+      const funded = customApplications * approval;
+      const monthly = pmt(state.loanAmount, annualRate, state.term);
+      const totalRepay = monthly * state.term;
+      const interest = totalRepay - state.loanAmount;
+      const fundingCost = state.loanAmount * fundingRate * state.term / 12;
+      const expectedLoss = state.loanAmount * pd * lgd;
+      const contributionPerLoan = interest - fundingCost - expectedLoss - state.opsCost;
+      const contributionPerApplication = approval * contributionPerLoan - state.dataCost;
+      const variableContribution = customApplications * contributionPerApplication;
+      const profit = variableContribution - state.fixedCost;
+      const breakEven = contributionPerApplication > 0 ? Math.floor(state.fixedCost / contributionPerApplication) + 1 : Infinity;
+      return { funded, monthly, interest, fundingCost, expectedLoss, contributionPerLoan, contributionPerApplication, variableContribution, profit, breakEven };
+    }
+
+    function renderFields() {
+      const host = document.getElementById("fields");
+      host.innerHTML = "";
+      fields.forEach(([key, label, min, max, step, unit]) => {
+        const wrap = document.createElement("div");
+        wrap.className = "field";
+        const head = document.createElement("div");
+        head.className = "field-head";
+        const labelEl = document.createElement("label");
+        labelEl.textContent = label;
+        labelEl.htmlFor = key;
+        const value = document.createElement("span");
+        value.className = "value";
+        value.id = `${key}Value`;
+        head.append(labelEl, value);
+        const input = document.createElement("input");
+        input.type = "range";
+        input.id = key;
+        input.min = min;
+        input.max = max;
+        input.step = step;
+        input.value = state[key];
+        input.addEventListener("input", (event) => {
+          state[key] = Number(event.target.value);
+          document.querySelectorAll(".scenario-tabs button").forEach(button => button.classList.remove("active"));
+          render();
+        });
+        wrap.append(head, input);
+        host.appendChild(wrap);
+      });
+    }
+
+    function updateFieldValues() {
+      fields.forEach(([key, , , , , unit]) => {
+        const el = document.getElementById(`${key}Value`);
+        const value = state[key];
+        el.textContent = unit === "元" ? compactMoney(value) : `${formatter.format(value)}${unit}`;
+        const input = document.getElementById(key);
+        if (input) input.value = value;
+      });
+    }
+
+    function renderIncomeRows(result) {
+      const rows = [
+        ["单笔合同利息收入", compactMoney(result.interest)],
+        ["单笔资金成本", compactMoney(result.fundingCost)],
+        ["单笔预期损失", compactMoney(result.expectedLoss)],
+        ["单笔放款运营成本", compactMoney(state.opsCost)],
+        ["单笔贷款期望贡献", compactMoney(result.contributionPerLoan)],
+        ["单个申请期望贡献", compactMoney(result.contributionPerApplication)]
+      ];
+      document.getElementById("incomeRows").innerHTML = rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
+    }
+
+    function renderChart() {
+      const canvas = document.getElementById("profitChart");
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.max(640, rect.width * dpr);
+      canvas.height = Math.max(320, rect.height * dpr);
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+      const width = canvas.width / dpr;
+      const height = canvas.height / dpr;
+      ctx.clearRect(0, 0, width, height);
+
+      const padding = { left: 64, right: 24, top: 24, bottom: 44 };
+      const maxApplicants = Math.max(1000, Math.ceil(state.applications * 1.8 / 500) * 500);
+      const points = [];
+      for (let i = 0; i <= 80; i++) {
+        const applicants = maxApplicants * i / 80;
+        points.push({ applicants, profit: calculate(applicants).profit });
+      }
+      const minY = Math.min(...points.map(p => p.profit), 0);
+      const maxY = Math.max(...points.map(p => p.profit), 0);
+      const yPad = Math.max(50000, (maxY - minY) * 0.15);
+      const yMin = minY - yPad;
+      const yMax = maxY + yPad;
+      const plotW = width - padding.left - padding.right;
+      const plotH = height - padding.top - padding.bottom;
+      const x = (v) => padding.left + (v / maxApplicants) * plotW;
+      const y = (v) => padding.top + (1 - (v - yMin) / (yMax - yMin)) * plotH;
+
+      ctx.strokeStyle = "#e6eaf0";
+      ctx.lineWidth = 1;
+      ctx.font = "12px -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.fillStyle = "#667085";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      for (let i = 0; i <= 4; i++) {
+        const val = yMin + (yMax - yMin) * i / 4;
+        const yy = y(val);
+        ctx.beginPath();
+        ctx.moveTo(padding.left, yy);
+        ctx.lineTo(width - padding.right, yy);
+        ctx.stroke();
+        ctx.fillText(`${Math.round(val / 10000)}万`, padding.left - 10, yy);
+      }
+
+      const zeroY = y(0);
+      ctx.strokeStyle = "#98a2b3";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(padding.left, zeroY);
+      ctx.lineTo(width - padding.right, zeroY);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#176e9c";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      points.forEach((point, index) => {
+        const xx = x(point.applicants);
+        const yy = y(point.profit);
+        if (index === 0) ctx.moveTo(xx, yy);
+        else ctx.lineTo(xx, yy);
+      });
+      ctx.stroke();
+
+      const current = calculate();
+      const cx = x(state.applications);
+      const cy = y(current.profit);
+      ctx.fillStyle = current.profit >= 0 ? "#1c7c54" : "#b42318";
+      ctx.beginPath();
+      ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#26374b";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      for (let i = 0; i <= 4; i++) {
+        const val = maxApplicants * i / 4;
+        ctx.fillText(formatter.format(Math.round(val)), x(val), height - padding.bottom + 14);
+      }
+      ctx.textAlign = "right";
+      ctx.fillText("申请人数", width - padding.right, height - 18);
+    }
+
+    function render() {
+      const result = calculate();
+      updateFieldValues();
+      const profitText = document.getElementById("profitText");
+      profitText.textContent = compactMoney(result.profit);
+      profitText.className = result.profit >= 0 ? "profit" : "loss";
+      document.getElementById("breakEvenText").textContent = Number.isFinite(result.breakEven) ? `${formatter.format(result.breakEven)} 人` : "暂不可达";
+      document.getElementById("fundedText").textContent = `${formatter.format(Math.round(result.funded))} 人`;
+      document.getElementById("volumeText").textContent = compactMoney(result.funded * state.loanAmount);
+      renderIncomeRows(result);
+      renderChart();
+    }
+
+    document.querySelectorAll(".scenario-tabs button").forEach(button => {
+      button.addEventListener("click", () => {
+        Object.assign(state, scenarios[button.dataset.scenario]);
+        document.querySelectorAll(".scenario-tabs button").forEach(btn => btn.classList.toggle("active", btn === button));
+        render();
+      });
+    });
+
+    window.addEventListener("resize", renderChart);
+    renderFields();
+    Object.assign(state, scenarios.pilot);
+    render();
+  </script>
+</body>
+</html>
